@@ -3,6 +3,7 @@ package gitflow.actions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.util.text.StringUtil;
 import git4idea.commands.GitCommandResult;
 import gitflow.GitflowConfigUtil;
 import gitflow.ui.GitflowBranchChooseDialog;
@@ -39,6 +40,10 @@ public class TrackReleaseAction extends GitflowAction {
             branchChoose.show();
             if (branchChoose.isOK()){
                 String branchName= branchChoose.getSelectedBranchName();
+                if ( StringUtil.isEmpty( branchName ) ) {
+                    NotifyUtil.notifyError(myProject, "Error", "No remote branch selected");
+                    return;
+                }
                 final String releaseName= GitflowConfigUtil.getReleaseNameFromBranch(myProject, branchName);
                 final GitflowErrorsListener errorLineHandler = new GitflowErrorsListener(myProject);
 

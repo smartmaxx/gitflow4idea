@@ -26,7 +26,7 @@ public class GitflowInitOptionsDialog extends DialogWrapper {
     private JTextField featurePrefixTextField;
     private JTextField releasePrefixTextField;
     private JTextField hotfixPrefixTextField;
-    private JTextField supportPrefixTextField;
+    private JTextField bugfixPrefixTextField;
     private JTextField versionPrefixTextField;
 
     public GitflowInitOptionsDialog(Project project, List<String> localBranches) {
@@ -35,6 +35,10 @@ public class GitflowInitOptionsDialog extends DialogWrapper {
         setTitle("Options for gitflow init");
 
         productionBranchComboBox.setModel(new CollectionComboBoxModel(localBranches));
+        if ( localBranches.contains( "master" ) ){
+            productionBranchComboBox.setSelectedItem( "master" );
+        }
+
         developmentBranchComboBox.setModel(new CollectionComboBoxModel(localBranches));
 
         init();
@@ -52,7 +56,7 @@ public class GitflowInitOptionsDialog extends DialogWrapper {
         featurePrefixTextField.setEnabled(enable);
         releasePrefixTextField.setEnabled(enable);
         hotfixPrefixTextField.setEnabled(enable);
-        supportPrefixTextField.setEnabled(enable);
+        bugfixPrefixTextField.setEnabled(enable );
         versionPrefixTextField.setEnabled(enable);
     }
 
@@ -71,7 +75,7 @@ public class GitflowInitOptionsDialog extends DialogWrapper {
         options.setFeaturePrefix(featurePrefixTextField.getText());
         options.setReleasePrefix(releasePrefixTextField.getText());
         options.setHotfixPrefix(hotfixPrefixTextField.getText());
-        options.setSupportPrefix(supportPrefixTextField.getText());
+        options.setBugfixPrefix( bugfixPrefixTextField.getText( ) );
         options.setVersionPrefix(versionPrefixTextField.getText());
 
         return options;
@@ -95,8 +99,8 @@ public class GitflowInitOptionsDialog extends DialogWrapper {
             if (StringUtil.isEmptyOrSpaces(hotfixPrefixTextField.getText())) {
                 return new ValidationInfo(message, hotfixPrefixTextField);
             }
-            if (StringUtil.isEmptyOrSpaces(supportPrefixTextField.getText())) {
-                return new ValidationInfo(message, supportPrefixTextField);
+            if (StringUtil.isEmptyOrSpaces( bugfixPrefixTextField.getText( ) )) {
+                return new ValidationInfo(message, bugfixPrefixTextField );
             }
         }
 

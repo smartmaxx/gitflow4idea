@@ -23,6 +23,7 @@ public class GitflowConfigUtil {
     public static final String PREFIX_FEATURE = "gitflow.prefix.feature";
     public static final String PREFIX_RELEASE = "gitflow.prefix.release";
     public static final String PREFIX_HOTFIX = "gitflow.prefix.hotfix";
+    public static final String PREFIX_BUGFIX = "gitflow.prefix.bugfix";
     public static final String PREFIX_SUPPORT = "gitflow.prefix.support";
     public static final String PREFIX_VERSIONTAG = "gitflow.prefix.versiontag";
 
@@ -99,6 +100,26 @@ public class GitflowConfigUtil {
             NotifyUtil.notifyError(project, "Config error", e);
         }
         return hotfixPrefix;
+    }
+
+    public static String getCurrentBranchShortName(Project project, String branchName){
+        String featurePrefix= GitflowConfigUtil.getFeaturePrefix(project);
+        if ( branchName.contains( featurePrefix ) ){
+            return branchName.substring(branchName.indexOf(featurePrefix)+featurePrefix.length(),branchName.length());
+        }
+        String bugfixPrefix= GitflowConfigUtil.getBugfixPrefix(project);
+        if ( branchName.contains( bugfixPrefix ) ){
+            return branchName.substring(branchName.indexOf(bugfixPrefix)+bugfixPrefix.length(),branchName.length());
+        }
+        String hotfixPrefix= GitflowConfigUtil.getHotfixPrefix(project);
+        if ( branchName.contains( hotfixPrefix ) ){
+            return branchName.substring(branchName.indexOf(hotfixPrefix)+hotfixPrefix.length(),branchName.length());
+        }
+        String releasePrefix= GitflowConfigUtil.getReleasePrefix(project);
+        if ( branchName.contains( releasePrefix ) ){
+            return branchName.substring(branchName.indexOf(releasePrefix)+releasePrefix.length(),branchName.length());
+        }
+        return null;
     }
 
     public static String getFeatureNameFromBranch(Project project, String branchName){
@@ -196,5 +217,25 @@ public class GitflowConfigUtil {
         } catch (VcsException e) {
             NotifyUtil.notifyError(project, "Config error", e);
         }
+    }
+
+    public static String getBugfixPrefix( Project project ) {
+        GitRepository repo = GitBranchUtil.getCurrentRepository(project);
+        VirtualFile root = repo.getRoot();
+
+        String bugfixPrefix=null;
+
+        try{
+            bugfixPrefix = GitConfigUtil.getValue(project,root,PREFIX_BUGFIX);
+        }
+        catch (VcsException e) {
+            NotifyUtil.notifyError(project, "Config error", e);
+        }
+        return bugfixPrefix;
+    }
+
+    public static String getBugfixNameFromBranch( Project project, String branchName ) {
+        String bugfixPrefix= GitflowConfigUtil.getBugfixPrefix(project);
+        return branchName.substring(branchName.indexOf(bugfixPrefix) + bugfixPrefix.length(), branchName.length());
     }
 }

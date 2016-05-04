@@ -127,4 +127,8 @@ public abstract class AbstractBranchStartDialog extends DialogWrapper {
             return label;
         }
     }
+
+    public GitflowBranchUtil getGitflowBranchUtil( ) {
+        return gitflowBranchUtil;
+    }
 }

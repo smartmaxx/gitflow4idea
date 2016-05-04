@@ -111,7 +111,8 @@ public class GitflowWidget extends GitBranchWidget implements GitRepositoryChang
             return null;
 
         ActionGroup popupGroup = actions.getActions();
-        ListPopup listPopup = new PopupFactoryImpl.ActionGroupPopup("Gitflow Actions", popupGroup, SimpleDataContext.getProjectContext(project), false, false, false, true, null, -1,
+        ListPopup listPopup = new PopupFactoryImpl.ActionGroupPopup("GitflowEx Actions", popupGroup, SimpleDataContext
+                .getProjectContext(project), false, false, false, true, null, -1,
                 null, null);
 
         return listPopup;
@@ -163,7 +164,7 @@ public class GitflowWidget extends GitBranchWidget implements GitRepositoryChang
 
         boolean hasGitflow = actions.hasGitflow();
 
-        myText = hasGitflow ? "Gitflow" : "No Gitflow";
+        myText = hasGitflow ? "Gitflow Ex" : "No GitflowEx";
         myTooltip = getDisplayableBranchTooltip(repo);
         myStatusBar.updateWidget(ID());
     }

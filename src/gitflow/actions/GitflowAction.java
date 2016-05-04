@@ -32,6 +32,7 @@ public class GitflowAction extends DumbAwareAction {
     String featurePrefix;
     String releasePrefix;
     String hotfixPrefix;
+    String bugfixPrefix;
     String masterBranch;
     String developBranch;
 
@@ -54,6 +55,7 @@ public class GitflowAction extends DumbAwareAction {
         featurePrefix = GitflowConfigUtil.getFeaturePrefix(myProject);
         releasePrefix = GitflowConfigUtil.getReleasePrefix(myProject);
         hotfixPrefix= GitflowConfigUtil.getHotfixPrefix(myProject);
+        bugfixPrefix= GitflowConfigUtil.getBugfixPrefix(myProject);
         masterBranch= GitflowConfigUtil.getMasterBranch(myProject);
         developBranch= GitflowConfigUtil.getDevelopBranch(myProject);
     }

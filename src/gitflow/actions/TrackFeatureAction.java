@@ -3,6 +3,7 @@ package gitflow.actions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.util.text.StringUtil;
 import git4idea.commands.GitCommandResult;
 import git4idea.repo.GitRemote;
 import gitflow.GitflowConfigUtil;
@@ -40,6 +41,10 @@ public class TrackFeatureAction extends GitflowAction {
             branchChoose.show();
             if (branchChoose.isOK()){
                 String branchName= branchChoose.getSelectedBranchName();
+                if ( StringUtil.isEmpty( branchName ) ) {
+                    NotifyUtil.notifyError(myProject, "Error", "No remote branch selected");
+                    return;
+                }
                 final String featureName= GitflowConfigUtil.getFeatureNameFromBranch(myProject, branchName);
                 final GitRemote remote=branchUtil.getRemoteByBranch(branchName);
                 final GitflowErrorsListener errorLineHandler = new GitflowErrorsListener(myProject);

@@ -80,9 +80,9 @@ public class GitInitLineHandler extends GitLineHandler {
                 writer.newLine();
                 writer.flush();
             }
-            if (s.contains("Support branches")) {
-                writer.write(_initOptions.getSupportPrefix());
-                myVcs.showCommandLine(_initOptions.getSupportPrefix());
+            if (s.contains("Bugfix branches")) {
+                writer.write(_initOptions.getBugfixPrefix( ) );
+                myVcs.showCommandLine(_initOptions.getBugfixPrefix( ) );
                 writer.newLine();
                 writer.flush();
             }

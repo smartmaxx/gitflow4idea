@@ -100,7 +100,10 @@ public class GitflowActions {
                 //can't publish feature if it's already published
                 if (branchUtil.isCurrentBranchPublished()==false){
                     actionGroup.add(new PublishFeatureAction());
+                } else {
+                    actionGroup.add( new PushAction( "feature" ) );
                 }
+                actionGroup.add(new UpdateFromDevelopAction());
             }
 
             //make sure there's a feature to track, and that not all features are track
@@ -120,6 +123,8 @@ public class GitflowActions {
                 //can't publish release if it's already published
                 if (branchUtil.isCurrentBranchPublished()==false){
                     actionGroup.add(new PublishReleaseAction());
+                } else {
+                    actionGroup.add( new PushAction( "release" ) );
                 }
             }
 
@@ -140,6 +145,26 @@ public class GitflowActions {
                 //can't publish hotfix if it's already published
                 if (branchUtil.isCurrentBranchPublished() == false) {
                     actionGroup.add(new PublishHotfixAction());
+                } else {
+                    actionGroup.add( new PushAction( "hotfix" ) );
+                }
+            }
+
+            //BUGFIX ACTIONS
+            if ( branchUtil.isCurrentBranchRelease() || branchUtil.isCurrentBranchBugfix() ) {
+                actionGroup.addSeparator( "Bugfix" );
+
+                //master only actions
+                actionGroup.add( new StartBugfixAction( ) );
+                if ( branchUtil.isCurrentBranchBugfix( ) ) {
+                    actionGroup.add( new FinishBugfixAction( ) );
+
+                    //can't publish hotfix if it's already published
+                    if ( branchUtil.isCurrentBranchPublished( ) == false ) {
+                        actionGroup.add( new PublishBugfixAction( ) );
+                    } else {
+                        actionGroup.add( new PushAction("bugfix") );
+                    }
                 }
             }
 

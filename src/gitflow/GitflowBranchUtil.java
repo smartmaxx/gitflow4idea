@@ -6,178 +6,211 @@ import git4idea.GitRemoteBranch;
 import git4idea.branch.GitBranchUtil;
 import git4idea.repo.GitRemote;
 import git4idea.repo.GitRepository;
+import gitflow.ui.NotifyUtil;
 
+import java.awt.*;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+
 
 /**
- *
- *
  * @author Opher Vishnia / opherv.com / opherv@gmail.com
  */
 public class GitflowBranchUtil {
 
-    Project myProject;
-    GitRepository repo;
+	Project myProject;
+	GitRepository repo;
 
-    String currentBranchName;
-    String branchnameMaster;
-    String prefixFeature;
-    String prefixRelease;
-    String prefixHotfix;
+	String currentBranchName;
+	String branchnameMaster;
+	String prefixFeature;
+	String prefixRelease;
+	String prefixHotfix;
+	String prefixBugfix;
 
-    public GitflowBranchUtil(Project project){
-        myProject=project;
-        repo = GitBranchUtil.getCurrentRepository(project);
+	public GitflowBranchUtil( Project project ) {
+		myProject = project;
+		repo = GitBranchUtil.getCurrentRepository( project );
 
-        currentBranchName = GitBranchUtil.getBranchNameOrRev(repo);
+		currentBranchName = GitBranchUtil.getBranchNameOrRev( repo );
 
-        branchnameMaster= GitflowConfigUtil.getMasterBranch(project);
-        prefixFeature = GitflowConfigUtil.getFeaturePrefix(project);
-        prefixRelease = GitflowConfigUtil.getReleasePrefix(project);
-        prefixHotfix = GitflowConfigUtil.getHotfixPrefix(project);
-    }
+		branchnameMaster = GitflowConfigUtil.getMasterBranch( project );
+		prefixFeature = GitflowConfigUtil.getFeaturePrefix( project );
+		prefixRelease = GitflowConfigUtil.getReleasePrefix( project );
+		prefixHotfix = GitflowConfigUtil.getHotfixPrefix( project );
+		prefixBugfix = GitflowConfigUtil.getBugfixPrefix( project );
+	}
 
-    public boolean hasGitflow(){
-        boolean hasGitflow=false;
-        hasGitflow=GitflowConfigUtil.getMasterBranch(myProject)!=null
-                   && GitflowConfigUtil.getDevelopBranch(myProject)!=null
-                   && GitflowConfigUtil.getFeaturePrefix(myProject)!=null
-                   && GitflowConfigUtil.getReleasePrefix(myProject)!=null
-                   && GitflowConfigUtil.getHotfixPrefix(myProject)!=null;
+	public static void open( String stashUrl, String sourceBranch, String destinationBranch, Project myProject ) {
+		if ( Desktop.isDesktopSupported( ) ) {
+			try {
+				String pullRequestUrl = buildPullRequestUrl( stashUrl, sourceBranch, destinationBranch );
+				Desktop.getDesktop( ).browse( new URI( pullRequestUrl ) );
+				NotifyUtil.notifyInfo( myProject, "Pull Request action",
+						"URL: `" + pullRequestUrl + "` is opened in your " + "default web browser" );
+			} catch ( Exception e ) {
+				NotifyUtil.notifyError( myProject, "Can't open Pull RQ url", e );
+			}
+		} else {
+			NotifyUtil.notifyError( myProject, "Can't open Pull RQ url", "Desktop is not supported" );
+		}
+	}
 
-        return hasGitflow;
-    }
+	private static String buildPullRequestUrl( String stashUrl, String sourceBranch, String destinationBranch ) {
+		return stashUrl + "/pull-requests?create&targetBranch=" + destinationBranch + "&sourceBranch=" + sourceBranch;
+	}
 
-    public boolean isCurrentBranchMaster(){
-        return currentBranchName.startsWith(branchnameMaster);
-    }
+	public boolean hasGitflow( ) {
+		boolean hasGitflow = false;
+		hasGitflow = GitflowConfigUtil.getMasterBranch( myProject ) != null
+				&& GitflowConfigUtil.getDevelopBranch( myProject ) != null
+				&& GitflowConfigUtil.getFeaturePrefix( myProject ) != null
+				&& GitflowConfigUtil.getReleasePrefix( myProject ) != null
+				&& GitflowConfigUtil.getHotfixPrefix( myProject ) != null
+				&& GitflowConfigUtil.getBugfixPrefix( myProject ) != null;
 
-    public boolean isCurrentBranchFeature(){
-        return currentBranchName.startsWith(prefixFeature);
-    }
+		return hasGitflow;
+	}
 
+	public boolean isCurrentBranchMaster( ) {
+		return currentBranchName.startsWith( branchnameMaster );
+	}
 
-    public boolean isCurrentBranchRelease(){
-        return currentBranchName.startsWith(prefixRelease);
-    }
+	public boolean isCurrentBranchFeature( ) {
+		return currentBranchName.startsWith( prefixFeature );
+	}
 
-    public boolean isCurrentBranchHotfix(){
-        return currentBranchName.startsWith(prefixHotfix);
-    }
+	public boolean isCurrentBranchRelease( ) {
+		return currentBranchName.startsWith( prefixRelease );
+	}
 
-    //checks whether the current branch also exists on the remote
-    public boolean isCurrentBranchPublished(){
-        return getRemoteBranchesWithPrefix(currentBranchName).isEmpty()==false;
-    }
+	public boolean isCurrentBranchHotfix( ) {
+		return currentBranchName.startsWith( prefixHotfix );
+	}
 
+	//checks whether the current branch also exists on the remote
+	public boolean isCurrentBranchPublished( ) {
+		return getRemoteBranchesWithPrefix( currentBranchName ).isEmpty( ) == false;
+	}
 
-    //if no prefix specified, returns all remote branches
-    public ArrayList<String> getRemoteBranchesWithPrefix(String prefix){
-        ArrayList<String> remoteBranches = getRemoteBranchNames();
-        ArrayList<String> selectedBranches = new ArrayList<String>();
+	//if no prefix specified, returns all remote branches
+	public ArrayList<String> getRemoteBranchesWithPrefix( String prefix ) {
+		ArrayList<String> remoteBranches = getRemoteBranchNames( );
+		ArrayList<String> selectedBranches = new ArrayList<String>( );
 
-        for(Iterator<String> i = remoteBranches.iterator(); i.hasNext(); ) {
-            String branch = i.next();
-            if (branch.contains(prefix)){
-                selectedBranches.add(branch);
-            }
-        }
+		for ( Iterator<String> i = remoteBranches.iterator( ); i.hasNext( ); ) {
+			String branch = i.next( );
+			if ( branch.contains( prefix ) ) {
+				selectedBranches.add( branch );
+			}
+		}
 
-        return selectedBranches;
-    }
+		return selectedBranches;
+	}
 
+	public ArrayList<String> filterBranchListByPrefix( Collection<String> inputBranches, String prefix ) {
+		ArrayList<String> outputBranches = new ArrayList<String>( );
 
-    public ArrayList<String> filterBranchListByPrefix(Collection<String> inputBranches,String prefix){
-        ArrayList<String> outputBranches= new ArrayList<String>();
+		for ( Iterator<String> i = inputBranches.iterator( ); i.hasNext( ); ) {
+			String branch = i.next( );
+			if ( branch.contains( prefix ) ) {
+				outputBranches.add( branch );
+			}
+		}
 
-        for(Iterator<String> i = inputBranches.iterator(); i.hasNext(); ) {
-            String branch = i.next();
-            if (branch.contains(prefix)){
-                outputBranches.add(branch);
-            }
-        }
+		return outputBranches;
+	}
 
-        return outputBranches;
-    }
+	public ArrayList<String> getRemoteBranchNames( ) {
+		ArrayList<GitRemoteBranch> remoteBranches = new ArrayList<GitRemoteBranch>(
+				repo.getBranches( ).getRemoteBranches( ) );
+		ArrayList<String> branchNameList = new ArrayList<String>( );
 
-    public ArrayList<String> getRemoteBranchNames(){
-        ArrayList<GitRemoteBranch> remoteBranches = new ArrayList<GitRemoteBranch>(repo.getBranches().getRemoteBranches());
-        ArrayList<String> branchNameList = new ArrayList<String>();
+		for ( Iterator<GitRemoteBranch> i = remoteBranches.iterator( ); i.hasNext( ); ) {
+			GitRemoteBranch branch = i.next( );
+			branchNameList.add( branch.getName( ) );
+		}
 
-        for(Iterator<GitRemoteBranch> i = remoteBranches.iterator(); i.hasNext(); ) {
-            GitRemoteBranch branch = i.next();
-            branchNameList.add(branch.getName());
-        }
+		return branchNameList;
+	}
 
-        return branchNameList;
-    }
+	public ArrayList<String> getLocalBranchNames( ) {
+		ArrayList<GitLocalBranch> localBranches = new ArrayList<GitLocalBranch>(
+				repo.getBranches( ).getLocalBranches( ) );
+		ArrayList<String> branchNameList = new ArrayList<String>( );
 
+		for ( Iterator<GitLocalBranch> i = localBranches.iterator( ); i.hasNext( ); ) {
+			GitLocalBranch branch = i.next( );
+			branchNameList.add( branch.getName( ) );
+		}
 
-    public ArrayList<String> getLocalBranchNames(){
-        ArrayList<GitLocalBranch> localBranches = new ArrayList<GitLocalBranch>(repo.getBranches().getLocalBranches());
-        ArrayList<String> branchNameList = new ArrayList<String>();
+		return branchNameList;
+	}
 
-        for(Iterator<GitLocalBranch> i = localBranches.iterator(); i.hasNext(); ) {
-            GitLocalBranch branch = i.next();
-            branchNameList.add(branch.getName());
-        }
+	public GitRemote getRemoteByBranch( String branchName ) {
+		GitRemote remote = null;
 
-        return branchNameList;
-    }
+		ArrayList<GitRemoteBranch> remoteBranches = new ArrayList<GitRemoteBranch>(
+				repo.getBranches( ).getRemoteBranches( ) );
 
+		for ( Iterator<GitRemoteBranch> i = remoteBranches.iterator( ); i.hasNext( ); ) {
+			GitRemoteBranch branch = i.next( );
+			if ( branch.getName( ) == branchName ) {
+				remote = branch.getRemote( );
+				break;
+			}
+		}
 
+		return remote;
+	}
 
-    public GitRemote getRemoteByBranch(String branchName){
-        GitRemote remote=null;
+	public boolean areAllBranchesTracked( String prefix ) {
 
-        ArrayList<GitRemoteBranch> remoteBranches= new ArrayList<GitRemoteBranch>(repo.getBranches().getRemoteBranches());
+		ArrayList<String> localBranches = filterBranchListByPrefix( getLocalBranchNames( ), prefix );
 
-        for(Iterator<GitRemoteBranch> i = remoteBranches.iterator(); i.hasNext(); ) {
-            GitRemoteBranch branch = i.next();
-            if (branch.getName()==branchName){
-                remote=branch.getRemote();
-                break;
-            }
-        }
+		//to avoid a vacuous truth value. That is, when no branches at all exist, they shouldn't be
+		//considered as "all pulled"
+		if ( localBranches.isEmpty( ) ) {
+			return false;
+		}
 
-        return remote;
-    }
+		ArrayList<String> remoteBranches = getRemoteBranchNames( );
 
-    public boolean areAllBranchesTracked(String prefix){
+		//check that every local branch has a matching remote branch
+		for ( Iterator<String> i = localBranches.iterator( ); i.hasNext( ); ) {
+			String localBranch = i.next( );
+			boolean hasMatchingRemoteBranch = false;
 
+			for ( Iterator<String> j = remoteBranches.iterator( ); j.hasNext( ); ) {
+				String remoteBranch = j.next( );
 
-        ArrayList<String> localBranches = filterBranchListByPrefix(getLocalBranchNames() , prefix) ;
+				if ( remoteBranch.contains( localBranch ) ) {
+					hasMatchingRemoteBranch = true;
+					break;
+				}
+			}
 
-        //to avoid a vacuous truth value. That is, when no branches at all exist, they shouldn't be
-        //considered as "all pulled"
-        if (localBranches.isEmpty()){
-            return false;
-        }
+			//at least one matching branch wasn't found
+			if ( hasMatchingRemoteBranch == false ) {
+				return false;
+			}
+		}
 
-        ArrayList<String> remoteBranches = getRemoteBranchNames();
+		return true;
+	}
 
-        //check that every local branch has a matching remote branch
-        for(Iterator<String> i = localBranches.iterator(); i.hasNext(); ) {
-            String localBranch = i.next();
-            boolean hasMatchingRemoteBranch = false;
+	public List<String> getLocalReleaseBranches( ) {
+		return filterBranchListByPrefix( getLocalBranchNames( ), prefixRelease );
+	}
 
-            for(Iterator<String> j = remoteBranches.iterator(); j.hasNext(); ) {
-                String remoteBranch = j.next();
+	public List<String> getRemoteReleaseBranches( ) {
+		return filterBranchListByPrefix( getRemoteBranchNames( ), prefixRelease );
+	}
 
-                if (remoteBranch.contains(localBranch)){
-                    hasMatchingRemoteBranch=true;
-                    break;
-                }
-            }
-
-            //at least one matching branch wasn't found
-            if (hasMatchingRemoteBranch==false){
-                return false;
-            }
-        }
-
-        return true;
-    }
+	public boolean isCurrentBranchBugfix( ) {
+		return currentBranchName.startsWith( prefixBugfix );
+	}
 }
