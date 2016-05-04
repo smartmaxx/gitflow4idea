@@ -20,6 +20,15 @@ I saw this [suggestion page](http://youtrack.jetbrains.com/issue/IDEA-65491) on 
 
 Huge shoutout [to Kirill Likhodedov](https://github.com/klikh), who wrote much of the original git4idea plugin, without which this plugin could not exist
 
+Finally I (Konstantyn Maksimczyk) forked this project to extend it with some flow features, that we need to our project.
+First of all we need to have possibility to perform all finish action made on remote side - using pull requests.
+Finally current version allows you to configure your gitflow plugin not to merge feature/fix/release to local branch,
+ but publish it and open web browser to the page with pull reauest create form. Currently it supports Atlassian
+ GitStash only. But nobody prevents you to manually open the browser :)
+
+One more thing: I renamed a little bit this plugin, adding `Ex` as `Extended` to the Plugin name to not to interfere
+with original plugin.
+
 ## Installation
 
 The plugin is available via the IntelliJ plugin manager. Just search for "Git Flow Integration" to get the latest version!
@@ -38,24 +47,17 @@ Please be sure to check out [this thread](https://github.com/OpherV/gitflow4idea
 
 ## Caveats
 
-While the plugin is operational and contains all basic functions (init/feature/release/hotfix), it may contains bugs. With your help I'll be able to find and zap them all.
+While the plugin is operational and contains all basic functions (init/feature/release/hotfix/bugfix), it may contains
+bugs. With your help I'll be able to find and zap them all.
 
 ## Helping out
 
 This project is under active development.
-If you encounter any bug or an issue, I encourage you to add the them to the [Issues list](https://github.com/OpherV/gitflow4idea/issues) on Github.
+If you encounter any bug or an issue, please email me to smart.maxx[some_strange_symbol]gmail.com
 Feedback and suggestions are also very welcome.
-
-I have worked hard on this plugin on my spare time. If you feel it is useful to you, please consider buying me a beer. I code better drunk.
-
-[![PayPal][2]][1]
-
-[1]: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=DH67M9XFKAJHA&lc=IL&item_name=gitflow4idea%20development&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest
-[2]: https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif
 
 ## License
 
 This plugin is under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0.html).
-Copyright 2013-2014, Opher Vishnia.
-
-
+Original Copyright 2013-2014, Opher Vishnia.
+Fork Copyright 2016-Eternity, Smart Maxx
