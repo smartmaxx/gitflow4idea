@@ -31,20 +31,20 @@ public class StartBugfixAction extends GitflowAction {
 
 		new Task.Backgroundable( myProject, "Starting bugfix " + bugfixName, false ) {
 			@Override public void run( @NotNull ProgressIndicator indicator ) {
-				createHotfixBranch( baseBranchName, bugfixName );
+				createBugfixBranch( baseBranchName, bugfixName );
 			}
 		}.queue( );
 	}
 
-	private void createHotfixBranch( String baseBranchName, String hotfixBranchName ) {
+	private void createBugfixBranch( String baseBranchName, String bugfixBranchName ) {
 		GitflowErrorsListener errorListener = new GitflowErrorsListener( myProject );
-		GitCommandResult result = myGitflow.startHotfix( repo, hotfixBranchName, baseBranchName, errorListener );
+		GitCommandResult result = myGitflow.startBugfix( repo, bugfixBranchName, baseBranchName, errorListener );
 
 		if ( result.success( ) ) {
 			String startedHotfixMessage = String
-					.format( "A new bugfix '%s%s' was created, based on '%s'", bugfixPrefix, hotfixBranchName,
+					.format( "A new bugfix '%s%s' was created, based on '%s'", bugfixPrefix, bugfixBranchName,
 							baseBranchName );
-			NotifyUtil.notifySuccess( myProject, hotfixBranchName, startedHotfixMessage );
+			NotifyUtil.notifySuccess( myProject, bugfixBranchName, startedHotfixMessage );
 		} else {
 			NotifyUtil.notifyError( myProject, "Error",
 					"Please have a look at the Version Control console for more details" );

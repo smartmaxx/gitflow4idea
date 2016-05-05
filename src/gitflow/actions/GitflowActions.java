@@ -12,172 +12,161 @@ import gitflow.GitflowBranchUtil;
 import gitflow.GitflowConfigUtil;
 import org.jetbrains.annotations.NotNull;
 
+
 /**
  * All actions associated with Gitflow
  *
  * @author Opher Vishnia / opherv.com / opherv@gmail.com
  */
 public class GitflowActions {
-    Project myProject;
-    Gitflow myGitflow = ServiceManager.getService(Gitflow.class);
-    GitRepository repo;
-    GitflowBranchUtil branchUtil;
+	Project myProject;
+	Gitflow myGitflow = ServiceManager.getService( Gitflow.class );
+	GitRepository repo;
+	GitflowBranchUtil branchUtil;
 
-    VirtualFileManager virtualFileMananger;
+	VirtualFileManager virtualFileMananger;
 
+	String currentBranchName;
 
-    String currentBranchName;
+	String featurePrefix;
+	String releasePrefix;
+	String hotfixPrefix;
+	String masterBranch;
+	String developBranch;
 
-    String featurePrefix;
-    String releasePrefix;
-    String hotfixPrefix;
-    String masterBranch;
-    String developBranch;
+	boolean noRemoteTrackBranches;
+	boolean noRemoteFeatureBranches;
 
-    boolean noRemoteTrackBranches;
-    boolean noRemoteFeatureBranches;
+	boolean trackedAllFeatureBranches;
+	boolean trackedAllReleaseBranches;
 
-    boolean trackedAllFeatureBranches;
-    boolean trackedAllReleaseBranches;
+	public GitflowActions( @NotNull Project project ) {
+		myProject = project;
+		branchUtil = new GitflowBranchUtil( project );
+		virtualFileMananger = VirtualFileManager.getInstance( );
 
-    public GitflowActions(@NotNull Project project){
-        myProject=project;
-        branchUtil=new GitflowBranchUtil(project);
-        virtualFileMananger = VirtualFileManager.getInstance();
+		repo = GitBranchUtil.getCurrentRepository( myProject );
 
-        repo = GitBranchUtil.getCurrentRepository(myProject);
+		if ( repo != null ) {
+			currentBranchName = GitBranchUtil.getBranchNameOrRev( repo );
+		}
 
+		featurePrefix = GitflowConfigUtil.getFeaturePrefix( myProject );
+		releasePrefix = GitflowConfigUtil.getReleasePrefix( myProject );
+		hotfixPrefix = GitflowConfigUtil.getHotfixPrefix( myProject );
+		masterBranch = GitflowConfigUtil.getMasterBranch( myProject );
+		developBranch = GitflowConfigUtil.getDevelopBranch( myProject );
 
-        if (repo!=null){
-            currentBranchName= GitBranchUtil.getBranchNameOrRev(repo);
-        }
+		if ( releasePrefix != null ) {
+			noRemoteTrackBranches = branchUtil.getRemoteBranchesWithPrefix( releasePrefix ).isEmpty( );
+			trackedAllReleaseBranches = branchUtil.areAllBranchesTracked( releasePrefix );
+		}
+		if ( featurePrefix != null ) {
+			noRemoteFeatureBranches = branchUtil.getRemoteBranchesWithPrefix( featurePrefix ).isEmpty( );
+			trackedAllFeatureBranches = branchUtil.areAllBranchesTracked( featurePrefix );
+		}
 
-        featurePrefix = GitflowConfigUtil.getFeaturePrefix(myProject);
-        releasePrefix = GitflowConfigUtil.getReleasePrefix(myProject);
-        hotfixPrefix= GitflowConfigUtil.getHotfixPrefix(myProject);
-        masterBranch= GitflowConfigUtil.getMasterBranch(myProject);
-        developBranch= GitflowConfigUtil.getDevelopBranch(myProject);
+	}
 
-        if (releasePrefix!=null){
-            noRemoteTrackBranches = branchUtil.getRemoteBranchesWithPrefix(releasePrefix).isEmpty();
-            trackedAllReleaseBranches = branchUtil.areAllBranchesTracked(releasePrefix);
-        }
-        if (featurePrefix!=null){
-            noRemoteFeatureBranches = branchUtil.getRemoteBranchesWithPrefix(featurePrefix).isEmpty();
-            trackedAllFeatureBranches = branchUtil.areAllBranchesTracked(featurePrefix);
-        }
+	public boolean hasGitflow( ) {
+		return branchUtil.hasGitflow( );
+	}
 
+	//constructs the actions for the widget popup
+	public ActionGroup getActions( ) {
 
-    }
+		DefaultActionGroup actionGroup = new DefaultActionGroup( null, false );
 
-    public boolean hasGitflow(){
-        return branchUtil.hasGitflow();
-    }
+		//gitflow not setup
+		if ( branchUtil.hasGitflow( ) != true ) {
+			actionGroup.add( new InitRepoAction( ) );
+		} else {
 
+			//FEATURE ACTIONS
 
+			actionGroup.addSeparator( "Feature" );
+			actionGroup.add( new StartFeatureAction( ) );
+			//feature only actions
+			if ( branchUtil.isCurrentBranchFeature( ) ) {
+				actionGroup.add( new FinishFeatureAction( ) );
 
+				//can't publish feature if it's already published
+				if ( branchUtil.isCurrentBranchPublished( ) == false ) {
+					actionGroup.add( new PublishFeatureAction( ) );
+				} else {
+					actionGroup.add( new PushAction( "feature" ) );
+				}
+				actionGroup.add( new UpdateFromDevelopAction( ) );
+			}
 
-    //constructs the actions for the widget popup
-    public ActionGroup getActions(){
+			//make sure there's a feature to track, and that not all features are track
+			if ( noRemoteFeatureBranches == false && trackedAllFeatureBranches == false ) {
+				actionGroup.add( new TrackFeatureAction( ) );
+			}
 
+			//RELEASE ACTIONS
 
-        DefaultActionGroup actionGroup= new DefaultActionGroup(null, false);
+			actionGroup.addSeparator( "Release" );
+			actionGroup.add( new StartReleaseAction( ) );
+			//release only actions
+			if ( branchUtil.isCurrentBranchRelease( ) ) {
+				actionGroup.add( new FinishReleaseAction( ) );
 
-        //gitflow not setup
-        if (branchUtil.hasGitflow()!=true){
-            actionGroup.add(new InitRepoAction());
-        }
-        else{
+				//can't publish release if it's already published
+				if ( branchUtil.isCurrentBranchPublished( ) == false ) {
+					actionGroup.add( new PublishReleaseAction( ) );
+				} else {
+					actionGroup.add( new PushAction( "release" ) );
+				}
+			}
 
-            //FEATURE ACTIONS
+			//make sure there's something to track and that not all features are tracked
+			if ( noRemoteTrackBranches == false && trackedAllReleaseBranches == false ) {
+				actionGroup.add( new TrackReleaseAction( ) );
+			}
 
-            actionGroup.addSeparator("Feature");
-            actionGroup.add(new StartFeatureAction());
-            //feature only actions
-            if (branchUtil.isCurrentBranchFeature()){
-                actionGroup.add(new FinishFeatureAction());
+			//HOTFIX ACTIONS
+			actionGroup.addSeparator( "Hotfix" );
 
-                //can't publish feature if it's already published
-                if (branchUtil.isCurrentBranchPublished()==false){
-                    actionGroup.add(new PublishFeatureAction());
-                } else {
-                    actionGroup.add( new PushAction( "feature" ) );
-                }
-                actionGroup.add(new UpdateFromDevelopAction());
-            }
+			//master only actions
+			actionGroup.add( new StartHotfixAction( ) );
+			if ( branchUtil.isCurrentBranchHotfix( ) ) {
+				actionGroup.add( new FinishHotfixAction( ) );
 
-            //make sure there's a feature to track, and that not all features are track
-            if (noRemoteFeatureBranches ==false && trackedAllFeatureBranches ==false){
-                actionGroup.add(new TrackFeatureAction());
-            }
+				//can't publish hotfix if it's already published
+				if ( branchUtil.isCurrentBranchPublished( ) == false ) {
+					actionGroup.add( new PublishHotfixAction( ) );
+				} else {
+					actionGroup.add( new PushAction( "hotfix" ) );
+				}
+			}
 
+			//BUGFIX ACTIONS
+			actionGroup.addSeparator( "Bugfix" );
 
-            //RELEASE ACTIONS
+			//master only actions
+			actionGroup.add( new StartBugfixAction( ) );
+			if ( branchUtil.isCurrentBranchBugfix( ) ) {
+				actionGroup.add( new FinishBugfixAction( ) );
 
-            actionGroup.addSeparator("Release");
-            actionGroup.add(new StartReleaseAction());
-            //release only actions
-            if (branchUtil.isCurrentBranchRelease()){
-                actionGroup.add(new FinishReleaseAction());
+				//can't publish bugfix if it's already published
+				if ( branchUtil.isCurrentBranchPublished( ) == false ) {
+					actionGroup.add( new PublishBugfixAction( ) );
+				} else {
+					actionGroup.add( new PushAction( "bugfix" ) );
+				}
+			}
 
-                //can't publish release if it's already published
-                if (branchUtil.isCurrentBranchPublished()==false){
-                    actionGroup.add(new PublishReleaseAction());
-                } else {
-                    actionGroup.add( new PushAction( "release" ) );
-                }
-            }
+		}
 
-            //make sure there's something to track and that not all features are tracked
-            if (noRemoteTrackBranches==false  && trackedAllReleaseBranches ==false){
-                actionGroup.add(new TrackReleaseAction());
-            }
+		return actionGroup;
+	}
 
-
-            //HOTFIX ACTIONS
-            actionGroup.addSeparator("Hotfix");
-
-            //master only actions
-            actionGroup.add(new StartHotfixAction());
-            if (branchUtil.isCurrentBranchHotfix()){
-                actionGroup.add(new FinishHotfixAction());
-
-                //can't publish hotfix if it's already published
-                if (branchUtil.isCurrentBranchPublished() == false) {
-                    actionGroup.add(new PublishHotfixAction());
-                } else {
-                    actionGroup.add( new PushAction( "hotfix" ) );
-                }
-            }
-
-            //BUGFIX ACTIONS
-            if ( branchUtil.isCurrentBranchRelease() || branchUtil.isCurrentBranchBugfix() ) {
-                actionGroup.addSeparator( "Bugfix" );
-
-                //master only actions
-                actionGroup.add( new StartBugfixAction( ) );
-                if ( branchUtil.isCurrentBranchBugfix( ) ) {
-                    actionGroup.add( new FinishBugfixAction( ) );
-
-                    //can't publish hotfix if it's already published
-                    if ( branchUtil.isCurrentBranchPublished( ) == false ) {
-                        actionGroup.add( new PublishBugfixAction( ) );
-                    } else {
-                        actionGroup.add( new PushAction("bugfix") );
-                    }
-                }
-            }
-
-        }
-
-        return actionGroup;
-    }
-
-    public static void runMergeTool(){
-        git4idea.actions.GitResolveConflictsAction resolveAction= new git4idea.actions.GitResolveConflictsAction();
-        AnActionEvent e = new AnActionEvent(null, DataManager.getInstance().getDataContext(), ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0);
-        resolveAction.actionPerformed(e);
-    }
-
+	public static void runMergeTool( ) {
+		git4idea.actions.GitResolveConflictsAction resolveAction = new git4idea.actions.GitResolveConflictsAction( );
+		AnActionEvent e = new AnActionEvent( null, DataManager.getInstance( ).getDataContext( ), ActionPlaces.UNKNOWN,
+				new Presentation( "" ), ActionManager.getInstance( ), 0 );
+		resolveAction.actionPerformed( e );
+	}
 
 }

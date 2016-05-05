@@ -394,6 +394,29 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 		return run( h );
 	}
 
+	public GitCommandResult startBugfix( @NotNull GitRepository repository, @NotNull String bugfixName,
+			@Nullable String baseBranch, @Nullable GitLineHandlerListener... listeners ) {
+		final GitLineHandler h = new GitLineHandler( repository.getProject( ), repository.getRoot( ),
+				GitflowCommand( ) );
+		h.setSilent( false );
+
+		h.addParameters( "bugfix" );
+		h.addParameters( "start" );
+		if ( GitflowConfigurable.bugfixFetchOrigin( repository.getProject( ) ) ) {
+			h.addParameters( "-F" );
+		}
+		h.addParameters( bugfixName );
+
+		if ( baseBranch != null ) {
+			h.addParameters( baseBranch );
+		}
+
+		for ( GitLineHandlerListener listener : listeners ) {
+			h.addLineListener( listener );
+		}
+		return run( h );
+	}
+
 	public GitCommandResult finishHotfix( @NotNull GitRepository repository, @NotNull String hotfixName,
 			@NotNull String tagMessage, @Nullable GitLineHandlerListener... listeners ) {
 		final GitLineHandler h = new GitLineHandler( repository.getProject( ), repository.getRoot( ),

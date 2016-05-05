@@ -74,6 +74,15 @@
               <toolTipText value="Finish means:&#10;1. publish branch to origin&#10;2. checkout parent (develop/release/master)&#10;3. delete local branch&#10;4. open Stash url in browser with pull request creation page"/>
             </properties>
           </component>
+          <component id="f1924" class="javax.swing.JCheckBox" binding="releasePublishOnStart">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <selected value="true"/>
+              <text value="Publish release on Start"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="35b8b" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -142,6 +151,14 @@
               <toolTipText value="Finish means:&#10;1. publish branch to origin&#10;2. checkout parent (develop/release/master)&#10;3. delete local branch&#10;4. open Stash url in browser with pull request creation page"/>
             </properties>
           </component>
+          <component id="3ab3f" class="javax.swing.JCheckBox" binding="hotfixPublishOnStart">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Publish feature on Start"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="ee6f8" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -185,6 +202,14 @@
               <selected value="true"/>
               <text value="finish by pull request"/>
               <toolTipText value="Finish means: 1. publish branch to origin 2. checkout parent (develop/release/master) 3. delete local branch 4. open Stash url in browser with pull request creation page"/>
+            </properties>
+          </component>
+          <component id="2c0ac" class="javax.swing.JCheckBox" binding="featurePublishOnStart">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Publish feature on Start"/>
             </properties>
           </component>
         </children>
@@ -233,6 +258,14 @@
                   <toolTipText value="Finish means:&#10;1. publish branch to origin&#10;2. checkout parent (develop/release/master)&#10;3. delete local branch&#10;4. open Stash url in browser with pull request creation page"/>
                 </properties>
               </component>
+              <component id="a875b" class="javax.swing.JCheckBox" binding="bugfixPublishOnStart">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Publish bugfix on Start"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
@@ -259,7 +292,7 @@
             </constraints>
             <properties>
               <labelFor value="91ba4"/>
-              <text value="Stash host url"/>
+              <text value="Stash repository url"/>
             </properties>
           </component>
         </children>

@@ -19,18 +19,22 @@ public class GitflowConfigurable implements Configurable {
 	public static final String GITFLOW_FEATURE_FETCH_ORIGIN = "Gitflow.featureFetchOrigin";
 	public static final String GITFLOW_FEATURE_FINISH_BY_PULL_RQ = "Gitflow.featureFinishWithPullRq";
 	public static final String GITFLOW_FEATURE_KEEP_REMOTE = "Gitflow.featureKeepRemote";
+	public static final String GITFLOW_FEATURE_PUBLISH_ON_START = "Gitflow.featurePublishOnStart";
 
 	public static final String GITFLOW_RELEASE_FETCH_ORIGIN = "Gitflow.releaseFetchOrigin";
 	public static final String GITFLOW_PUSH_ON_FINISH_RELEASE = "Gitflow.pushOnFinishRelease";
+	public static final String GITFLOW_RELEASE_PUBLISH_ON_START = "Gitflow.releasePublishOnStart";
 	public static final String GITFLOW_RELEASE_FINISH_BY_PULL_RQ = "Gitflow.releaseFinishWithPullRq";
 	public static final String GITFLOW_PUSH_ON_FINISH_HOTFIX = "Gitflow.pushOnFinishHotfix";
 	public static final String GITFLOW_HOTFIX_FINISH_BY_PULL_RQ = "Gitflow.hotfixFinishWithPullRq";
+	public static final String GITFLOW_HOTFIX_PUBLISH_ON_START = "Gitflow.hotfixPublishOnStart";
 	public static final String GITFLOW_DONT_TAG_RELEASE = "Gitflow.dontTagRelease";
 	public static final String GITFLOW_USE_CUSTOM_TAG_COMMIT_MESSAGE = "Gitflow.useCustomTagCommitMessage";
 	public static final String GITFLOW_CUSTOM_TAG_COMMIT_MESSAGE = "Gitflow.customTagCommitMessage";
 
 	public static final String GITFLOW_PUSH_ON_FINISH_BUGFIX = "Gitflow.pushOnFinishBugfix";
 	public static final String GITFLOW_BUGFIX_FINISH_BY_PULL_RQ = "Gitflow.bugfixFinishWithPullRq";
+	public static final String GITFLOW_BUGFIX_PUBLISH_ON_START = "Gitflow.bugfixPublishOnStart";
 
 	public static final String GITFLOW_HOTFIX_FETCH_ORIGIN = "Gitflow.hotfixFetchOrigin";
 	public static final String GITFLOW_DONT_TAG_HOTFIX = "Gitflow.dontTagHotfix";
@@ -72,6 +76,11 @@ public class GitflowConfigurable implements Configurable {
 				.getBoolean( GitflowConfigurable.GITFLOW_FEATURE_FINISH_BY_PULL_RQ, true );
 	}
 
+	public static boolean featurePublishOnStart( Project project ) {
+		return PropertiesComponent.getInstance( project )
+				.getBoolean( GitflowConfigurable.GITFLOW_FEATURE_PUBLISH_ON_START, false );
+	}
+
     /* release */
 
 	public static boolean releaseFetchOrigin( Project project ) {
@@ -87,6 +96,11 @@ public class GitflowConfigurable implements Configurable {
 	public static boolean releaseFinishByPullRq( Project project ) {
 		return PropertiesComponent.getInstance( project )
 				.getBoolean( GitflowConfigurable.GITFLOW_RELEASE_FINISH_BY_PULL_RQ, true );
+	}
+
+	public static boolean releasePublishOnStart( Project project ) {
+		return PropertiesComponent.getInstance( project )
+				.getBoolean( GitflowConfigurable.GITFLOW_RELEASE_PUBLISH_ON_START, true );
 	}
 
 	public static boolean dontTagRelease( Project project ) {
@@ -125,6 +139,11 @@ public class GitflowConfigurable implements Configurable {
 	public static boolean hotfixFinishByPullRq( Project project ) {
 		return PropertiesComponent.getInstance( project )
 				.getBoolean( GitflowConfigurable.GITFLOW_HOTFIX_FINISH_BY_PULL_RQ, true );
+	}
+
+	public static boolean hotfixPublishOnStart( Project project ) {
+		return PropertiesComponent.getInstance( project )
+				.getBoolean( GitflowConfigurable.GITFLOW_HOTFIX_PUBLISH_ON_START, false );
 	}
 
 	public static boolean dontTagHotfix( Project project ) {
@@ -174,6 +193,11 @@ public class GitflowConfigurable implements Configurable {
 				.getBoolean( GitflowConfigurable.GITFLOW_BUGFIX_FINISH_BY_PULL_RQ, true );
 	}
 
+	public static boolean bugfixPublishOnStart( Project project ) {
+		return PropertiesComponent.getInstance( project )
+				.getBoolean( GitflowConfigurable.GITFLOW_BUGFIX_PUBLISH_ON_START, false );
+	}
+
 	public static String getStashUrl( Project project ) {
 		return PropertiesComponent.getInstance( project ).getValue( GitflowConfigurable.GITFLOW_STASH_URL, "" );
 	}
@@ -199,6 +223,9 @@ public class GitflowConfigurable implements Configurable {
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_FEATURE_FINISH_BY_PULL_RQ, true )
 						!= gitflowOptionsForm.isFinishFeatureByPullRq( ) ||
 
+				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_FEATURE_PUBLISH_ON_START, false )
+						!= gitflowOptionsForm.isFeaturePublishOnStart( ) ||
+
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_RELEASE_FETCH_ORIGIN, false )
 						!= gitflowOptionsForm.isReleaseFetchOrigin( ) ||
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_PUSH_ON_FINISH_RELEASE, false )
@@ -207,6 +234,8 @@ public class GitflowConfigurable implements Configurable {
 						!= gitflowOptionsForm.isDontTagRelease( ) ||
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_RELEASE_FINISH_BY_PULL_RQ, false )
 						!= gitflowOptionsForm.isFinishReleaseByPullRq( ) ||
+				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_RELEASE_PUBLISH_ON_START, true )
+						!= gitflowOptionsForm.isReleasePublishOnStart( ) ||
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_USE_CUSTOM_TAG_COMMIT_MESSAGE, false )
 						!= gitflowOptionsForm.isUseCustomTagCommitMessage( ) ||
 				PropertiesComponent.getInstance( project )
@@ -219,6 +248,8 @@ public class GitflowConfigurable implements Configurable {
 						!= gitflowOptionsForm.isPushOnFinishHotfix( ) ||
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_HOTFIX_FINISH_BY_PULL_RQ, false )
 						!= gitflowOptionsForm.isFinishHotfixByPullRq( ) ||
+				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_HOTFIX_PUBLISH_ON_START, false )
+						!= gitflowOptionsForm.isHotfixPublishOnStart( ) ||
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_DONT_TAG_HOTFIX, false )
 						!= gitflowOptionsForm.isDontTagHotfix( ) ||
 				PropertiesComponent.getInstance( project )
@@ -235,6 +266,8 @@ public class GitflowConfigurable implements Configurable {
 						!= gitflowOptionsForm.isBugfixFetchOrigin( ) ||
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_PUSH_ON_FINISH_BUGFIX, false )
 						!= gitflowOptionsForm.isPushOnFinishBugfix( ) ||
+				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_BUGFIX_PUBLISH_ON_START, false )
+						!= gitflowOptionsForm.isBugfixPublishOnStart( ) ||
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_BUGFIX_FINISH_BY_PULL_RQ, false )
 						!= gitflowOptionsForm.isFinishBugfixByPullRq( );
 	}
@@ -246,6 +279,8 @@ public class GitflowConfigurable implements Configurable {
 				.setValue( GITFLOW_FEATURE_KEEP_REMOTE, Boolean.toString( gitflowOptionsForm.isFeatureKeepRemote( ) ) );
 		PropertiesComponent.getInstance( project ).setValue( GITFLOW_FEATURE_FINISH_BY_PULL_RQ,
 				Boolean.toString( gitflowOptionsForm.isFinishFeatureByPullRq( ) ) );
+		PropertiesComponent.getInstance( project ).setValue( GITFLOW_FEATURE_PUBLISH_ON_START,
+				Boolean.toString( gitflowOptionsForm.isFeaturePublishOnStart( ) ) );
 
 		PropertiesComponent.getInstance( project ).setValue( GITFLOW_RELEASE_FETCH_ORIGIN,
 				Boolean.toString( gitflowOptionsForm.isReleaseFetchOrigin( ) ) );
@@ -253,6 +288,8 @@ public class GitflowConfigurable implements Configurable {
 				Boolean.toString( gitflowOptionsForm.isPushOnFinishRelease( ) ) );
 		PropertiesComponent.getInstance( project ).setValue( GITFLOW_RELEASE_FINISH_BY_PULL_RQ,
 				Boolean.toString( gitflowOptionsForm.isFinishReleaseByPullRq( ) ) );
+		PropertiesComponent.getInstance( project ).setValue( GITFLOW_RELEASE_PUBLISH_ON_START,
+				Boolean.toString( gitflowOptionsForm.isReleasePublishOnStart( ) ) );
 		PropertiesComponent.getInstance( project )
 				.setValue( GITFLOW_DONT_TAG_RELEASE, Boolean.toString( gitflowOptionsForm.isDontTagRelease( ) ) );
 		PropertiesComponent.getInstance( project ).setValue( GITFLOW_USE_CUSTOM_TAG_COMMIT_MESSAGE,
@@ -266,6 +303,8 @@ public class GitflowConfigurable implements Configurable {
 				Boolean.toString( gitflowOptionsForm.isPushOnFinishHotfix( ) ) );
 		PropertiesComponent.getInstance( project ).setValue( GITFLOW_HOTFIX_FINISH_BY_PULL_RQ,
 				Boolean.toString( gitflowOptionsForm.isFinishHotfixByPullRq( ) ) );
+		PropertiesComponent.getInstance( project ).setValue( GITFLOW_HOTFIX_PUBLISH_ON_START,
+				Boolean.toString( gitflowOptionsForm.isHotfixPublishOnStart( ) ) );
 		PropertiesComponent.getInstance( project )
 				.setValue( GITFLOW_DONT_TAG_HOTFIX, Boolean.toString( gitflowOptionsForm.isDontTagHotfix( ) ) );
 		PropertiesComponent.getInstance( project ).setValue( GITFLOW_USE_CUSTOM_HOTFIX_TAG_COMMIT_MESSAGE,
@@ -279,6 +318,8 @@ public class GitflowConfigurable implements Configurable {
 				Boolean.toString( gitflowOptionsForm.isPushOnFinishBugfix( ) ) );
 		PropertiesComponent.getInstance( project ).setValue( GITFLOW_BUGFIX_FINISH_BY_PULL_RQ,
 				Boolean.toString( gitflowOptionsForm.isFinishBugfixByPullRq( ) ) );
+		PropertiesComponent.getInstance( project ).setValue( GITFLOW_BUGFIX_PUBLISH_ON_START,
+				Boolean.toString( gitflowOptionsForm.isBugfixPublishOnStart( ) ) );
 
 		PropertiesComponent.getInstance( project ).setValue( GITFLOW_STASH_URL, gitflowOptionsForm.getStashUrl( ) );
 	}
@@ -290,6 +331,8 @@ public class GitflowConfigurable implements Configurable {
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_FEATURE_KEEP_REMOTE, false ) );
 		gitflowOptionsForm.setFinishFeatureByPullRq(
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_FEATURE_FINISH_BY_PULL_RQ, true ) );
+		gitflowOptionsForm.setFeaturePublishOnStart(
+				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_FEATURE_PUBLISH_ON_START, false ) );
 
 		gitflowOptionsForm.setReleaseFetchOrigin(
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_RELEASE_FETCH_ORIGIN, false ) );
@@ -297,6 +340,8 @@ public class GitflowConfigurable implements Configurable {
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_PUSH_ON_FINISH_RELEASE, false ) );
 		gitflowOptionsForm.setFinishReleaseByPullRq(
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_RELEASE_FINISH_BY_PULL_RQ, true ) );
+		gitflowOptionsForm.setReleasePublishOnStart(
+				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_RELEASE_PUBLISH_ON_START, true ) );
 		gitflowOptionsForm.setDontTagRelease(
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_DONT_TAG_RELEASE, false ) );
 		gitflowOptionsForm.setUseCustomTagCommitMessage(
@@ -310,6 +355,8 @@ public class GitflowConfigurable implements Configurable {
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_PUSH_ON_FINISH_HOTFIX, false ) );
 		gitflowOptionsForm.setFinishHotfixByPullRq(
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_HOTFIX_FINISH_BY_PULL_RQ, true ) );
+		gitflowOptionsForm.setHotfixPublishOnStart(
+				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_HOTFIX_PUBLISH_ON_START, false ) );
 		gitflowOptionsForm.setDontTagHotfix(
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_DONT_TAG_HOTFIX, false ) );
 		gitflowOptionsForm.setUseCustomHotfixCommitMessage( PropertiesComponent.getInstance( project )
@@ -326,6 +373,8 @@ public class GitflowConfigurable implements Configurable {
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_PUSH_ON_FINISH_BUGFIX, false ) );
 		gitflowOptionsForm.setFinishBugfixByPullRq(
 				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_BUGFIX_FINISH_BY_PULL_RQ, true ) );
+		gitflowOptionsForm.setBugfixPublishOnStart(
+				PropertiesComponent.getInstance( project ).getBoolean( GITFLOW_BUGFIX_PUBLISH_ON_START, true ) );
 
 		gitflowOptionsForm.setStashUrl(
 				PropertiesComponent.getInstance( project ).getValue( GITFLOW_STASH_URL, DEFAULT_STASH_URL ) );

@@ -32,6 +32,10 @@ public class GitflowOptionsForm implements ItemListener {
 	private JCheckBox finishBugfixByPullRq;
 	private JCheckBox bugfixFetchOrigin;
 	private JCheckBox pushOnFinishBugfix;
+	private JCheckBox featurePublishOnStart;
+	private JCheckBox bugfixPublishOnStart;
+	private JCheckBox releasePublishOnStart;
+	private JCheckBox hotfixPublishOnStart;
 
 	public JPanel getContentPane( ) {
 		dontTagRelease.addItemListener( this );
@@ -205,16 +209,32 @@ public class GitflowOptionsForm implements ItemListener {
 		return finishFeatureByPullRq.isSelected( );
 	}
 
+	public boolean isFeaturePublishOnStart( ) {
+		return featurePublishOnStart.isSelected( );
+	}
+
 	public boolean isFinishReleaseByPullRq( ) {
 		return finishReleaseByPullRq.isSelected( );
+	}
+
+	public boolean isReleasePublishOnStart( ) {
+		return releasePublishOnStart.isSelected( );
 	}
 
 	public boolean isFinishHotfixByPullRq( ) {
 		return finishHotfixByPullRq.isSelected( );
 	}
 
+	public boolean isHotfixPublishOnStart( ) {
+		return hotfixPublishOnStart.isSelected( );
+	}
+
 	public boolean isFinishBugfixByPullRq( ) {
 		return finishBugfixByPullRq.isSelected( );
+	}
+
+	public boolean isBugfixPublishOnStart( ) {
+		return bugfixPublishOnStart.isSelected( );
 	}
 
 	public String getStashUrl( ) {
@@ -233,16 +253,32 @@ public class GitflowOptionsForm implements ItemListener {
 		finishFeatureByPullRq.setSelected( b );
 	}
 
+	public void setFeaturePublishOnStart( boolean b ) {
+		featurePublishOnStart.setSelected( b );
+	}
+
 	public void setFinishReleaseByPullRq( boolean b ) {
 		finishReleaseByPullRq.setSelected( b );
+	}
+
+	public void setReleasePublishOnStart( boolean b ) {
+		releasePublishOnStart.setSelected( b );
 	}
 
 	public void setFinishHotfixByPullRq( boolean b ) {
 		finishHotfixByPullRq.setSelected( b );
 	}
 
+	public void setHotfixPublishOnStart( boolean b ) {
+		hotfixPublishOnStart.setSelected( b );
+	}
+
 	public void setBugfixFetchOrigin( boolean b ) {
 		bugfixFetchOrigin.setSelected( b );
+	}
+
+	public void setBugfixPublishOnStart( boolean b ) {
+		bugfixPublishOnStart.setSelected( b );
 	}
 
 	public void setPushOnFinishBugfix( boolean b ) {
