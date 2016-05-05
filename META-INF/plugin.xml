@@ -2,7 +2,7 @@
     <name>Git Flow Integration Extended</name>
     <id>GitflowExtended</id>
     <description>Git Flow Extended Integration</description>
-    <version>1.0.0.0</version>
+    <version>1.1</version>
     <category>VCS Integration</category>
     <vendor url="https://github.com/smartmaxx/gitflow4idea">Konstantyn Maksimczyk</vendor>
 
