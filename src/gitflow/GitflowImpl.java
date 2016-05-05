@@ -123,7 +123,11 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 		for ( GitLineHandlerListener listener : listeners ) {
 			h.addLineListener( listener );
 		}
-		return run( h );
+		GitCommandResult result = run( h );
+		if ( result.success( ) && GitflowConfigurable.featurePublishOnStart( repository.getProject( ) ) ) {
+			result = publishFeature( repository, featureName, listeners );
+		}
+		return result;
 	}
 
 	public GitCommandResult finishFeature( @NotNull GitRepository repository, @NotNull String featureName,
@@ -276,7 +280,11 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 		for ( GitLineHandlerListener listener : listeners ) {
 			h.addLineListener( listener );
 		}
-		return run( h );
+		GitCommandResult result = run( h );
+		if ( result.success( ) && GitflowConfigurable.releasePublishOnStart( repository.getProject( ) ) ) {
+			result = publishRelease( repository, releaseName, listeners);
+		}
+		return result;
 	}
 
 	public GitCommandResult finishRelease( @NotNull GitRepository repository, @NotNull String releaseName,
@@ -391,7 +399,11 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 		for ( GitLineHandlerListener listener : listeners ) {
 			h.addLineListener( listener );
 		}
-		return run( h );
+		GitCommandResult result = run( h );
+		if ( result.success( ) && GitflowConfigurable.hotfixPublishOnStart( repository.getProject( ) ) ) {
+			result = publishHotfix( repository, hotfixName, listeners );
+		}
+		return result;
 	}
 
 	public GitCommandResult startBugfix( @NotNull GitRepository repository, @NotNull String bugfixName,
@@ -414,7 +426,11 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 		for ( GitLineHandlerListener listener : listeners ) {
 			h.addLineListener( listener );
 		}
-		return run( h );
+		GitCommandResult result = run( h );
+		if ( result.success( ) && GitflowConfigurable.bugfixPublishOnStart( repository.getProject( ) ) ) {
+			result = publishBugfix( repository, bugfixName, listeners );
+		}
+		return result;
 	}
 
 	public GitCommandResult finishHotfix( @NotNull GitRepository repository, @NotNull String hotfixName,
@@ -551,7 +567,7 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 		final GitLineHandler h = new GitLineHandler( repository.getProject( ), repository.getRoot( ),
 				GitCommand.CHECKOUT );
 		setUrl( h, repository );
-//1. switch to develop
+		//1. switch to develop
 		h.setSilent( false );
 
 		h.addParameters( "develop" );
@@ -560,8 +576,8 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 			h.addLineListener( listener );
 		}
 		GitCommandResult result = run( h );
-		if ( result.success() ) {
-//2. pull from origin to develop
+		if ( result.success( ) ) {
+			//2. pull from origin to develop
 			GitLineHandler handler = new GitLineHandler( repository.getProject( ), repository.getRoot( ),
 					GitCommand.PULL );
 			handler.addParameters( "origin" );
@@ -570,19 +586,17 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 				handler.addLineListener( listener );
 			}
 			result = run( handler );
-			if ( result.success() ) {
-//3. go back to feature
-				handler = new GitLineHandler( repository.getProject( ), repository.getRoot( ),
-						GitCommand.CHECKOUT);
+			if ( result.success( ) ) {
+				//3. go back to feature
+				handler = new GitLineHandler( repository.getProject( ), repository.getRoot( ), GitCommand.CHECKOUT );
 				handler.addParameters( featureName );
 				for ( GitLineHandlerListener listener : listeners ) {
 					handler.addLineListener( listener );
 				}
 				result = run( handler );
-				if ( result.success() ) {
-//4. merge from develop to feature
-					handler = new GitLineHandler( repository.getProject( ), repository.getRoot( ),
-							GitCommand.MERGE);
+				if ( result.success( ) ) {
+					//4. merge from develop to feature
+					handler = new GitLineHandler( repository.getProject( ), repository.getRoot( ), GitCommand.MERGE );
 					handler.addParameters( "origin/develop" );
 					for ( GitLineHandlerListener listener : listeners ) {
 						handler.addLineListener( listener );
