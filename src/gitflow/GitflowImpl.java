@@ -604,4 +604,21 @@ public class GitflowImpl extends GitImpl implements Gitflow {
 		}
 	}
 
+	public GitCommandResult trackBugfix( @NotNull GitRepository repository, @NotNull String bugfixName,
+			@Nullable GitLineHandlerListener... listeners ) {
+		final GitLineHandler h = new GitLineHandler( repository.getProject( ), repository.getRoot( ),
+				GitflowCommand( ) );
+		setUrl( h, repository );
+		h.setSilent( false );
+
+		h.addParameters( "bugfix" );
+		h.addParameters( "track" );
+		h.addParameters( bugfixName );
+
+		for ( GitLineHandlerListener listener : listeners ) {
+			h.addLineListener( listener );
+		}
+		return run( h );
+	}
+
 }

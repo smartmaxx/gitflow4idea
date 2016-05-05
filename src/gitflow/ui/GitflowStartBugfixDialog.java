@@ -25,11 +25,6 @@ public class GitflowStartBugfixDialog extends AbstractBranchStartDialog {
 	}
 
 	@Override protected JComponent createCenterPanel( ) {
-		if ( getGitflowBranchUtil( ).isCurrentBranchRelease( ) ) {
-			return super.createCenterPanel( );
-		} else {
-			NotifyUtil.notifyError(getProject(), "Error", "Current branch is not release one");
-			throw new RuntimeException( "Current branch is not release one" );
-		}
+		return super.createCenterPanel( );
 	}
 }

@@ -25,29 +25,24 @@ public class FinishBugfixAction extends GitflowAction {
 	@Override public void actionPerformed( AnActionEvent e ) {
 		super.actionPerformed( e );
 
-		List<String> remoteReleaseBranches = branchUtil.getRemoteReleaseBranches( );
+		List<String> remoteBranches = branchUtil.getRemoteBranchNames( );
 
-		if ( remoteReleaseBranches.size( ) > 0 ) {
-			String originatingRelease = "";
+		if ( remoteBranches.size( ) > 0 ) {
+			String originatingBranch = "";
 			List<String> localReleaseBranches = branchUtil.getLocalReleaseBranches( );
 			if ( !localReleaseBranches.isEmpty( ) && localReleaseBranches.size( ) == 1 ) {
-				originatingRelease = localReleaseBranches.get( 0 );
+				originatingBranch = localReleaseBranches.get( 0 );
 			}
-			if ( StringUtil.isEmpty( originatingRelease ) ) {
-				NotifyUtil.notifyError( myProject, "Error", "No local release found" );
-				return;
+			if ( StringUtil.isEmpty( originatingBranch ) ) {
+				NotifyUtil.notifyError( myProject, "Error",
+						"No local release found. Probably this bugfix is created not from release. WIll use develop" );
+				originatingBranch = developBranch;
 			}
 			List<String> filteredRemoteReleases = branchUtil
-					.filterBranchListByPrefix( remoteReleaseBranches, originatingRelease );
-			if ( filteredRemoteReleases.isEmpty( ) ) {
-				NotifyUtil.notifyError( myProject, "Error",
-						"Local release branch `" + originatingRelease + "` not found in remote list. Please publish "
-								+ "it or fetch changes from origin" );
-				return;
-			}
-			String originatingRemoteRelease = filteredRemoteReleases.get( 0 );
-			GitflowBranchChooseDialog branchChoose = new GitflowBranchChooseDialog( myProject, remoteReleaseBranches,
-					originatingRemoteRelease );
+					.filterBranchListByPrefix( remoteBranches, originatingBranch );
+			String originatingRemoteBranch = filteredRemoteReleases.get( 0 );
+			GitflowBranchChooseDialog branchChoose = new GitflowBranchChooseDialog( myProject, remoteBranches,
+					originatingRemoteBranch );
 
 			branchChoose.show( );
 			if ( branchChoose.isOK( ) ) {
@@ -56,7 +51,11 @@ public class FinishBugfixAction extends GitflowAction {
 					NotifyUtil.notifyError( myProject, "Error", "No release branch selected" );
 					return;
 				}
+				if ( branchName.contains( developBranch ) ){
+					branchName = developBranch;
+				}
 				String currentBranchName = GitBranchUtil.getBranchNameOrRev( repo );
+				final String targetBranch = branchName;
 
 				if ( currentBranchName.isEmpty( ) == false ) {
 
@@ -64,7 +63,6 @@ public class FinishBugfixAction extends GitflowAction {
 
 					final GitflowErrorsListener errorLineHandler = new GitflowErrorsListener( myProject );
 
-					final String originatingLocalRelease = originatingRelease;
 					new Task.Backgroundable( myProject, "Finishing bugfix " + bugfixName, false ) {
 						@Override public void run( @NotNull ProgressIndicator indicator ) {
 							GitCommandResult result = myGitflow.finishBugfix( repo, bugfixName, errorLineHandler );
@@ -77,12 +75,11 @@ public class FinishBugfixAction extends GitflowAction {
 									finishedBugfixMessage = String.format(
 											"The bugfix branch '%s%s' was pushed to origin and deleted locally. "
 													+ "Working copy switched to '%s'", featurePrefix, bugfixName,
-											originatingLocalRelease );
+											targetBranch );
 									String stashUrl = GitflowConfigurable.getStashUrl( myProject );
 									if ( !StringUtil.isEmpty( stashUrl ) ) {
 										GitflowBranchUtil
-												.open( stashUrl, bugfixPrefix + bugfixName, originatingLocalRelease,
-														myProject );
+												.open( stashUrl, bugfixPrefix + bugfixName, targetBranch, myProject );
 									}
 								}
 								NotifyUtil.notifySuccess( myProject, bugfixName, finishedBugfixMessage );

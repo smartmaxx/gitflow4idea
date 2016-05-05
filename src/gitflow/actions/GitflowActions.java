@@ -156,7 +156,7 @@ public class GitflowActions {
 					actionGroup.add( new PushAction( "bugfix" ) );
 				}
 			}
-
+			actionGroup.add( new TrackBugfixAction( ) );
 		}
 
 		return actionGroup;

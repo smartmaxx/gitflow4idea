@@ -76,4 +76,8 @@ public interface Gitflow extends Git {
 
 	GitCommandResult updateFromDevelop( @NotNull GitRepository repository, @NotNull String featureName,
 			@Nullable GitLineHandlerListener... listeners );
+
+	GitCommandResult trackBugfix( @NotNull GitRepository repository, @NotNull String bugfixName,
+			@Nullable GitLineHandlerListener... listeners );
+
 }

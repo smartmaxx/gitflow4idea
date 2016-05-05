@@ -39,6 +39,8 @@
                 text="Gitflow: Finish Bugfix"></action>
         <action id="Gitflow.PublishBugfix" class="gitflow.actions.PublishBugfixAction"
                 text="Gitflow: Publish Bugfix"></action>
+        <action id="Gitflow.TrackBugfix" class="gitflow.actions.TrackBugfixAction"
+                text="Gitflow: Track Bugfix..."></action>
     </actions>
 
     <project-components>
