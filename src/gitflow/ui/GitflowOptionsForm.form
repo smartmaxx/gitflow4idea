@@ -70,7 +70,7 @@
             </constraints>
             <properties>
               <selected value="true"/>
-              <text value="finish by pull request"/>
+              <text value="Finish by pull request"/>
               <toolTipText value="Finish means:&#10;1. publish branch to origin&#10;2. checkout parent (develop/release/master)&#10;3. delete local branch&#10;4. open Stash url in browser with pull request creation page"/>
             </properties>
           </component>
